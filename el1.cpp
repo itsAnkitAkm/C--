@@ -1,27 +1,56 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+
 using namespace std;
 
-int main() {
-    int n;
-    cin >> n;
-    int t;
-    cin >> t;
+// Function to compute the binomial coefficient C(n, k)
+long long binomialCoefficient(int n, int k) {
+    if (k > n) return 0;
+    if (k == 0 || k == n) return 1;
+    long long res = 1;
+    for (int i = 1; i <= k; ++i) {
+        res = res * (n - i + 1) / i;
+    }
+    return res;
+}
 
-    vector<long long> ans;
-    while (n--) {
-        int q;
-        cin >> q;
-        if (q == 1) {
-            int x, y;
-            cin >> x >> y;
+string findKthLexicographicalString(int N, int K) {
+    int countOfOnes = 2;
+    int countOfZeros = N - 2;
+    string result = "";
 
-            long long sum = pow(x,2) + pow(y,2);
-            ans.push_back(sum);
-            sort(ans.begin(), ans.end());
+    for (int i = 0; i < N; ++i) {
+        if (countOfOnes == 0) {
+            result += '0';
+            continue;
+        }
+        if (countOfZeros == 0) {
+            result += '1';
+            continue;
+        }
+
+        // Count the number of valid strings starting with '0' at this position
+        long long countWithZero = binomialCoefficient(countOfZeros + countOfOnes - 1, countOfOnes);
+
+        if (K <= countWithZero) {
+            result += '0';
+            countOfZeros--;
         } else {
-            cout << ans[t-1] << endl;
+            result += '1';
+            K -= countWithZero;
+            countOfOnes--;
         }
     }
+    
+    return result;
+}
+
+int main() {
+    int N, K;
+    cin >> N >> K;
+
+    string result = findKthLexicographicalString(N, K);
+    cout << result << endl;
 
     return 0;
 }
